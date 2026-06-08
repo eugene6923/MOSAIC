@@ -1,0 +1,13 @@
+{
+    "default_config": {
+        "num_images_per_class": 3, 
+        "obj_shape": "Sphere",
+        "obj_color": "white", 
+        "obj_size": 0.5,
+        "obj2_shape": "Sphere",
+        "obj2_color": "red",
+        "obj2_size": 0.5,
+        "max_complexity": 2,
+        "cam_position": [0, 0, 10]
+    }
+}

@@ -1,0 +1,86 @@
+# Python
+__pycache__
+*.pyc
+*.egg-info
+dist
+
+# Log
+*.log
+*.log.*
+*.jsonl
+
+# Data
+!**/alpaca-data-conversation.json
+
+# Editor
+.idea
+*.swp
+
+# Other
+.DS_Store
+wandb
+output
+
+checkpoints
+ckpts*
+
+# .ipynb_checkpoints
+# *.ipynb
+
+# DevContainer
+!.devcontainer/*
+
+# Demo
+serve_images/
+
+# # Image files
+*.png
+workspace_plots/figures
+workspace_plots/selected_lineplot_err
+
+# zip files
+*.zip
+
+# results
+results/comfort_ball
+results/comfort_car_ref_facing_left
+results/comfort_car_ref_facing_right
+results/multilingual
+results/eval/old
+results/eval/temp
+results/eval/*.json
+results/eval/*.xlsx
+
+# plots
+plots/
+
+# data
+data/
+
+# editable package
+__editable__*/
+
+# build
+models/llava/build/
+
+# api keys
+api_keys.py
+cosine-multiling*.json
+
+data_generation/assets/
+data_generation/background/
+data_generation/materials/
+data_generation/assets.zip
+git_rename/
+data/data_generation/assets/bicycle_mountain.blend
+data_generation/assets/HorseL.blend
+data_generation/assets/Sofa.blend
+data_generation/assets/Sophia.blend
+data_generation/assets/Dog.blend
+data_generation/assets/Bed.blend
+data_generation/assets/HorseR.blend
+data_generation/assets/Bench.blend
+data/comfort_car_ref_facing_right.zip
+data/comfort_ball.zip
+data/comfort_car_ref_facing_left.zip
+git_rename/objects/pack/pack-82ec4d7187e40445c6deb706dcdbfdbde8aeb884.pack
