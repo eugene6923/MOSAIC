@@ -1,8 +1,8 @@
 {
     "default_config": {
-        "num_images_per_class": 3, 
+        "num_images_per_class": 10000, 
         "obj_shape": "Sphere",
-        "obj_color": "available_colors",
+        "obj_color": "blue",
         "obj_size": 0.5,
         "max_complexity": 10,
         "cam_position": [0, 0, 10]

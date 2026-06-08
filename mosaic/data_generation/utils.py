@@ -47,18 +47,30 @@ def calculate_position_with_angle_range(ref_position, obj_size, angle_range, exi
     # Calculate minimum distance from reference object
     min_distance = (obj_size + existing_obj[0]['size']) * 1.5
     
-    # Calculate maximum distance based on scene bounds
-    max_distance_x_pos = scene_bound - ref_position[0]
-    max_distance_x_neg = scene_bound + ref_position[0]
-    max_distance_y_pos = scene_bound - ref_position[1]
-    max_distance_y_neg = scene_bound + ref_position[1]
-    
+    # Calculate maximum distance to stay within scene bounds
     cos_angle = math.cos(angle_rad)
     sin_angle = math.sin(angle_rad)
     
-    max_dist_x = max_distance_x_pos if cos_angle > 0 else max_distance_x_neg
-    max_dist_y = max_distance_y_pos if sin_angle > 0 else max_distance_y_neg
-    max_distance = min(max_dist_x, max_dist_y, 6.0)
+    # Calculate max distance for x and y axes separately
+    max_dist_x = float('inf')
+    max_dist_y = float('inf')
+    
+    if abs(cos_angle) > 1e-6:
+        if cos_angle > 0:
+            max_dist_x = (scene_bound - ref_position[0]) / cos_angle
+        else:
+            max_dist_x = (scene_bound + ref_position[0]) / (-cos_angle)
+    
+    if abs(sin_angle) > 1e-6:
+        if sin_angle > 0:
+            max_dist_y = (scene_bound - ref_position[1]) / sin_angle
+        else:
+            max_dist_y = (scene_bound + ref_position[1]) / (-sin_angle)
+    
+    # Take minimum to ensure both x and y stay within bounds
+    max_distance = min(max_dist_x, max_dist_y)
+    
+    # Ensure max_distance is at least min_distance
     max_distance = max(max_distance, min_distance + 0.5)
     
     distance = random.uniform(min_distance, max_distance)
@@ -101,10 +113,9 @@ def add_objects(obj_shape, obj_color, obj_size, num_objects, existing_obj=None, 
                     )
                 elif angle_range is not None and ref_position is None and len(existing_obj) == 0:
                     # First object - central box placement for position dataset
-                    box_size = 3.0
                     new_position = (
-                        random.uniform(-box_size/2, box_size/2),
-                        random.uniform(-box_size/2, box_size/2),
+                        random.uniform(-3.5, 3.5),
+                        random.uniform(-3.5, 3.5),
                         obj_size,
                     )
                 else:
