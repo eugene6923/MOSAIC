@@ -34,7 +34,6 @@ ckpts*
 serve_images/
 
 # # Image files
-*.png
 workspace_plots/figures
 workspace_plots/selected_lineplot_err
 
