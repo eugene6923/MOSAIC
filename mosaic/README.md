@@ -10,7 +10,7 @@ MOSAIC is a controlled diagnostic framework for analyzing multi-object generatio
 
 - [x] Default dataset generation code
 - [ ] Grid dataset generation code
-- [ ] Link for generated images
+- [ ] Link for downloading pre-generated images
 
 ## Repository Layout
 
@@ -85,7 +85,7 @@ All dataset generation is controlled via JSON config files in `generation_config
 
 ## Generated images
 
-If you want to just download the dataset that has been already generated, please find it [here]().
+If you want to just download the dataset that has been already generated, please find it [here](https://nextcloud-rack.mai.informatik.tu-darmstadt.de/s/PAoH6BqDDLbDwyK).
 
 ## Notes
 
