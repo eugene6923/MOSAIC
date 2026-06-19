@@ -17,36 +17,17 @@ def _is_valid_image(image_path):
     if not os.path.exists(image_path):
         return False
     try:
-        image = Image.open(image_path)
-        image.convert("RGB")
+        with Image.open(image_path) as image:
+            image.convert("RGB")
         return True
     except (OSError, IOError):
         return False
 
-def _serialize_vector(obj):
-    """
-    Recursively convert Blender Vector objects to tuples for pickling.
-    """
 
-    # Check for Vector type first by name (works even if we don't have the class)
-    type_name = type(obj).__name__
-    if type_name == 'Vector' or (hasattr(obj, 'xyz') and hasattr(obj, '__len__')):
-        return tuple(obj)
-    
-    # Handle dictionaries
-    if isinstance(obj, dict):
-        return {key: _serialize_vector(value) for key, value in obj.items()}
-    
-    # Handle lists
-    if isinstance(obj, list):
-        return [_serialize_vector(item) for item in obj]
-    
-    # Handle tuples (but not strings which are also iterable)
-    if isinstance(obj, tuple):
-        return tuple(_serialize_vector(item) for item in obj)
-    
-    # Return as-is for primitives
-    return obj
+def _should_generate_image(save_path):
+    """Return True when image should be generated (missing or invalid)."""
+    return (not os.path.exists(save_path)) or (not _is_valid_image(save_path))
+
 
 def execute_tasks(tasks, debug, gpu, description="Generating"):
     """
@@ -81,6 +62,11 @@ def _worker_wrapper(args):
     render_config = dict(config)
     render_kwargs = dict(kwargs_dict)
 
+    save_path = render_config.get('save_path')
+    # Re-check at execution time to avoid duplicate work when files were created meanwhile.
+    if save_path and not _should_generate_image(save_path):
+        return None, None
+
     mapping, distractors = render_scene_config(
         **render_config,
         render_shadow=True,
@@ -88,7 +74,7 @@ def _worker_wrapper(args):
         step=step,
         **render_kwargs
     )
-    return _serialize_vector(mapping), _serialize_vector(distractors)
+    return mapping, distractors
 
 def generate_count_dataset(config, args):
     """Generate count dataset with all variations."""
@@ -101,8 +87,8 @@ def generate_count_dataset(config, args):
         for i in range(config['num_images_per_class']):
             for num_object in range(1, config['max_complexity'] + 1):
                 save_path = os.path.join(config["save_path"], f'{obj_color}_{i}_{num_object}.png')
-                
-                if not os.path.exists(save_path) or not _is_valid_image(save_path):
+
+                if _should_generate_image(save_path):
                     config_copy = copy.deepcopy(config)
                     config_copy['obj_color'] = obj_color
                     config_copy['save_path'] = save_path
@@ -127,8 +113,8 @@ def generate_attribution_dataset(config, args):
         for obj2_color in obj2_colors:
             for i in range(config['num_images_per_class']):
                     save_path = os.path.join(config["save_path"], f'{obj_color}_{obj2_color}_{i}.png')
-                    
-                    if not os.path.exists(save_path) or not _is_valid_image(save_path):
+
+                    if _should_generate_image(save_path):
                         config_copy = copy.deepcopy(config)
                         config_copy['obj_color'] = obj_color # Set object color to reference color for attribution
                         config_copy['obj2_color'] = obj2_color # Set second object color to reference color for attribution
@@ -170,8 +156,8 @@ def generate_position_dataset(config, args):
             for i in range(config['num_images_per_class']):
                 for position, angle_range in angles.items():
                     save_path = os.path.join(config["save_path"], f'{obj_color}_{obj2_color}_{position}_{i}.png')
-                    
-                    if not os.path.exists(save_path) or not _is_valid_image(save_path):
+
+                    if _should_generate_image(save_path):
                         config_copy = copy.deepcopy(config)
                         config_copy['obj_color'] = obj_color # Set object color to reference color for attribution
                         config_copy['obj2_color'] = obj2_color # Set second object color to reference color for attribution

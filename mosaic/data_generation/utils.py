@@ -84,6 +84,59 @@ def calculate_position_with_angle_range(ref_position, obj_size, angle_range, exi
     
     return (new_x, new_y, obj_size)
 
+
+def _has_collision_with_existing(new_position, obj_size, existing_positions, comfort_ball=True):
+    """Return True when new_position collides with any existing position."""
+    for position, dimensions in existing_positions:
+        offset = dimensions[0] / 1.5 if comfort_ball else dimensions[0] / obj_size / 2
+        new_offset = obj_size / 1.25 if not comfort_ball else obj_size
+        if (
+            abs(new_position[0] - position[0]) < (new_offset + offset) and
+            abs(new_position[1] - position[1]) < (new_offset + offset) and
+            abs(new_position[2] - position[2]) < (new_offset + offset)
+        ):
+            return True
+    return False
+
+
+def _plan_position_pair(
+    obj_size,
+    obj2_size,
+    angle_range,
+    comfort_ball=True,
+    scene_bound=4.0,
+    restart_attempts=20,
+    second_object_attempts=500,
+):
+    """Plan two non-colliding positions for position dataset before creating any object."""
+    for _ in range(restart_attempts):
+        first_position = (
+            random.uniform(-3.5, 3.5),
+            random.uniform(-3.5, 3.5),
+            obj_size,
+        )
+
+        existing_positions = [(first_position, (obj_size, obj_size, obj_size))]
+        ref_stub = [{'size': obj_size}]
+
+        second_position = None
+        for _ in range(second_object_attempts):
+            candidate = calculate_position_with_angle_range(
+                first_position,
+                obj2_size,
+                angle_range,
+                ref_stub,
+                scene_bound=scene_bound,
+            )
+            if not _has_collision_with_existing(candidate, obj2_size, existing_positions, comfort_ball=comfort_ball):
+                second_position = candidate
+                break
+
+        if second_position is not None:
+            return first_position, second_position
+
+    return None, None
+
 def add_objects(obj_shape, obj_color, obj_size, num_objects, existing_obj=None, comfort_ball=True, angle_range=None, ref_position=None):
     
     # Initialize distractors list if None
@@ -126,19 +179,12 @@ def add_objects(obj_shape, obj_color, obj_size, num_objects, existing_obj=None, 
                         obj_size,
                     )
 
-            collision = False
-            for position, dimensions in existing_positions:
-                
-                offset = dimensions[0] / 1.5 if comfort_ball else dimensions[0] / obj_size / 2
-                
-                new_offset = obj_size / 1.25 if not comfort_ball else obj_size
-                if (
-                    abs(new_position[0] - position[0]) < (new_offset + offset) and
-                    abs(new_position[1] - position[1]) < (new_offset + offset) and
-                    abs(new_position[2] - position[2]) < (new_offset + offset)
-                ):
-                    collision = True
-                    break
+            collision = _has_collision_with_existing(
+                new_position,
+                obj_size,
+                existing_positions,
+                comfort_ball=comfort_ball,
+            )
             
             if not collision:
                 placed = True
@@ -359,33 +405,58 @@ def render_scene_config(
 
     elif "position" in dataset_name:
         assert angle_range is not None, "Angle range must be provided for position dataset."
-        
-        # Add first object
-        added_distractors = add_objects(
-                obj_shape, 
-                obj_color, 
+
+        first_position, second_position = None, None
+        while first_position is None or second_position is None:
+            first_position, second_position = _plan_position_pair(
                 obj_size,
-                1, 
-                existing_obj=None, 
-                comfort_ball=comfort_ball,
-                angle_range = angle_range,
-            )
-        
-        # Get first object's position for angle-based placement
-        ref_position = added_distractors[0]['location'] if added_distractors else None
-        
-        # Add second object with angle constraint
-        # Pass num_objects=2 so iter = 2 - 1 = 1 (add 1 new object)
-        added_distractors = add_objects(
-                obj2_shape, 
-                obj2_color, 
                 obj2_size,
-                2,  # Total target is 2 objects
-                existing_obj=added_distractors,  # Pass first object so iter = 2 - 1 = 1
+                angle_range,
                 comfort_ball=comfort_ball,
-                angle_range=angle_range,
-                ref_position=ref_position,
+                scene_bound=4.0,
+                restart_attempts=kwargs.get('position_restart_attempts', 20),
+                second_object_attempts=kwargs.get('position_second_object_attempts', 500),
             )
+
+        first_obj = add_object(
+            SHAPE_DIR,
+            obj_shape,
+            obj_size,
+            first_position,
+            comfort_ball=comfort_ball,
+        )
+        _apply_object_material(first_obj, obj_color)
+
+        second_obj = add_object(
+            SHAPE_DIR,
+            obj2_shape,
+            obj2_size,
+            second_position,
+            comfort_ball=comfort_ball,
+        )
+        _apply_object_material(second_obj, obj2_color)
+
+        added_distractors = [
+            {
+                'location': first_obj.location.copy(),
+                'dimensions': first_obj.dimensions.copy(),
+                'shape': obj_shape,
+                'color': obj_color,
+                'size': obj_size,
+                'position': [(first_obj.location, (obj_size, obj_size, obj_size))],
+            },
+            {
+                'location': second_obj.location.copy(),
+                'dimensions': second_obj.dimensions.copy(),
+                'shape': obj2_shape,
+                'color': obj2_color,
+                'size': obj2_size,
+                'position': [
+                    (first_obj.location, (obj_size, obj_size, obj_size)),
+                    (second_obj.location, (obj2_size, obj2_size, obj2_size)),
+                ],
+            },
+        ]
     
         # distractors
         if num_objects > 2:

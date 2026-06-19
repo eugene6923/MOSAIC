@@ -65,7 +65,7 @@ models/llava/build/
 # api keys
 api_keys.py
 cosine-multiling*.json
-
+data/
 data_generation/assets/
 data_generation/background/
 data_generation/materials/

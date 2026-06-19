@@ -3,10 +3,10 @@
         "num_images_per_class": 1000, 
         "obj_shape": "Sphere",
         "obj_color": "available_colors", 
-        "obj_size": 0.5,
+        "obj_size": 0.6,
         "obj2_shape": "Cube",
         "obj2_color": "available_colors",
-        "obj2_size": 0.5,
+        "obj2_size": 0.6,
         "max_complexity": 2,
         "cam_position": [0, 0, 10]
     }
