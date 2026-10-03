@@ -66,7 +66,8 @@ MOSAIC/
 ├── model.py                      condition encoders and the classifiers used for scoring
 ├── utils.py                      test_mode parsing, classifier loading, validation metrics
 ├── test_generate.py              generate images from trained checkpoints, see test.sh
-├── evaluate.py                   score generated images with the classifiers
+├── evaluate.py                   score generated images with the classifiers, see evaluate.sh
+├── train.sh, test.sh, evaluate.sh   example commands for the three steps below
 ├── classifier_weights/           pretrained classifiers (*.pth, see below)
 ├── diffusers/                    vendored diffusers with the two custom pipelines (MyCustomPipeline, MyCustomPipeline_dit)
 └── mosaic/                       dataset generation (Blender), see mosaic/README.md
@@ -86,6 +87,14 @@ conda activate mosaic
 ```
 
 The vendored `diffusers/` is used directly from source (`sys.path`), no installation needed.
+
+**Quick start.** The three steps of the pipeline each have an example launcher in the repository root; edit the `--test_mode` / paths inside and run them in order:
+
+```bash
+bash train.sh       # train one run            -> dit_weights/seed_42/<test_mode>/<param_string>/
+bash test.sh        # generate images from it  -> outputs/dit/gen_seed_1/.../images/<checkpoint>/
+bash evaluate.sh    # score the generated images -> outputs/.../evaluation/
+```
 
 **Classifier weights.** Validation during training and `evaluate.py` score images with pretrained classifiers that must be placed in `classifier_weights/`:
 
@@ -123,6 +132,8 @@ Run `python train.py --help` for all options.
 
 ## Generation
 
+See `test.sh` for an example:
+
 ```bash
 python test_generate.py --model_dir dit_weights/seed_42/position_composition1_10000
 ```
@@ -134,11 +145,13 @@ python test_generate.py --model_dir dit_weights/seed_42/position_composition1_10
 
 ## Evaluation
 
+See `evaluate.sh` for an example:
+
 ```bash
-python evaluate.py --images_dir outputs/dit/gen_seed_1/dit_weights/seed_42/position_composition1_10000/<param_string>/guidance_scale1.0_condition_scale1.0
+python evaluate.py --images_dir outputs/dit/gen_seed_1/dit_weights/seed_42/position_composition1_10000
 ```
 
-`evaluate.py` infers the task from the path, loads the matching classifiers and reports per checkpoint:
+`--images_dir` can be the `images/` folder or any parent of it (run directory, `test_mode` directory); it descends to the unique `images/` folder below. `evaluate.py` infers the task from the path, loads the matching classifiers and reports per checkpoint:
 
 - accuracy, mean confidence, per-label accuracy and a confusion matrix of the task classifier (count / position / colour pair);
 - for composition runs additionally colour accuracy and joint accuracy, each for **all**, **held-out** and **in-distribution** label pairs;

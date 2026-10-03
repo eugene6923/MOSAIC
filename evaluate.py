@@ -51,12 +51,26 @@ def parse_args():
 # paths and labels
 # ---------------------------------------------------------------------------
 def resolve_images_dir(path):
+    """Accept the images/ folder or any parent of it (run dir, test_mode dir, ...): descend through
+    unique sub-folders until images/ is found, like test_generate.py does for --model_dir."""
     path = path.rstrip("/")
-    if os.path.basename(path) != "images" and os.path.isdir(os.path.join(path, "images")):
-        path = os.path.join(path, "images")
     if not os.path.isdir(path):
         raise FileNotFoundError(f"{path} does not exist")
-    return path
+    current = path
+    while os.path.basename(current) != "images":
+        if os.path.isdir(os.path.join(current, "images")):
+            current = os.path.join(current, "images")
+            break
+        candidates = [d for d in sorted(os.listdir(current)) if os.path.isdir(os.path.join(current, d)) and d != "evaluation"]
+        if len(candidates) != 1:
+            raise FileNotFoundError(
+                f"No images/ folder under {current} and cannot pick a unique sub-folder (found {candidates}). "
+                "Pass the guidance_scale... folder or the images/ folder explicitly with --images_dir."
+            )
+        current = os.path.join(current, candidates[0])
+    if current != path:
+        print(f"Using images from {current}")
+    return current
 
 
 def test_mode_of(images_dir):
