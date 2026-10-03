@@ -24,6 +24,19 @@ def _is_valid_image(image_path):
         return False
 
 
+def _serialize_vector(obj):
+    """Recursively convert Blender Vector objects to tuples so results can be pickled."""
+    if type(obj).__name__ == 'Vector':
+        return tuple(obj)
+    if isinstance(obj, dict):
+        return {k: _serialize_vector(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_serialize_vector(v) for v in obj]
+    if isinstance(obj, tuple):
+        return tuple(_serialize_vector(v) for v in obj)
+    return obj
+
+
 def _should_generate_image(save_path):
     """Return True when image should be generated (missing or invalid)."""
     return (not os.path.exists(save_path)) or (not _is_valid_image(save_path))
@@ -74,7 +87,7 @@ def _worker_wrapper(args):
         step=step,
         **render_kwargs
     )
-    return mapping, distractors
+    return _serialize_vector(mapping), _serialize_vector(distractors)
 
 def generate_count_dataset(config, args):
     """Generate count dataset with all variations."""

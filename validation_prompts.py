@@ -1,70 +1,55 @@
-import re
 import torch
+
+from utils import is_composition, task_of
 
 
 def build_validation_prompts(args, train_dataset, weight_dtype, device):
-    validation_key = None
+    """Return (prompts, validation_key) for the run's task.
 
-    if "count" in args.test_mode:
-        if "composition" in args.test_mode:
-            counting = 10
-            onehot_condition = torch.eye(counting)
-            prompts = [torch.cat((onehot_condition[0].unsqueeze(0), onehot_condition[i].unsqueeze(0)), dim=0) for i in range(counting)] * args.val_num_samples
-            validation_key = [list(train_dataset.color_dict.keys())[0] + "_" + str(i + 1) for i in range(counting)] * args.val_num_samples
+    Each prompt is a tensor of one-hot tokens: shape (1, 10) for count/position and
+    (2, 10) for attribute (color1, color2) and composition (color, position).
+    Every prompt is repeated `args.val_num_samples` times.
+    """
+    task = task_of(args.test_mode)
+    one_hot = torch.eye(10)
+    prompts, validation_key = [], []
 
-        else:
-            condition_set = torch.eye(10, dtype=weight_dtype, device=device)
-            prompts = []
-            for i in range(10):
-                for _ in range(args.val_num_samples):
-                    prompts.append(condition_set[i].unsqueeze(0).unsqueeze(0))
-            validation_key = []
-            for i in range(1, 11):
-                for _ in range(args.val_num_samples):
-                    validation_key.append(i)
-
-    elif "attribute" in args.test_mode or "attribution" in args.test_mode:
-        color_condition = torch.eye(10)
+    if task == "count" and is_composition(args.test_mode):
         color_keys = list(train_dataset.color_dict.keys())
-        prompts = []
-        validation_key = []
+        for _ in range(args.val_num_samples):
+            for k in range(10):
+                for i in range(10):
+                    prompts.append(torch.stack((one_hot[k], one_hot[i])))
+                    validation_key.append(f"{color_keys[k]}_{i + 1}")
+
+    elif task == "count":
+        for i in range(10):
+            for _ in range(args.val_num_samples):
+                prompts.append(one_hot[i].unsqueeze(0).to(dtype=weight_dtype, device=device))
+                validation_key.append(i + 1)
+
+    elif task == "attribute":
+        color_keys = list(train_dataset.color_dict.keys())
         for _ in range(args.val_num_samples):
             for i in range(10):
                 for k in range(10):
-                    color = color_condition[i].unsqueeze(0)
-                    color2 = color_condition[k].unsqueeze(0)
-                    prompts.append(torch.cat((color, color2), dim=0))
+                    prompts.append(torch.stack((one_hot[i], one_hot[k])))
                     validation_key.append(f"{color_keys[i]}_{color_keys[k]}")
-    
 
-    elif "position" in args.test_mode:
-        if "composition" in args.test_mode:
-            color_condition = torch.eye(10)
-            position_condition = torch.eye(10)
-            color_keys = list(train_dataset.color_dict.keys())
-            position_keys = list(train_dataset.position_cond_dict.keys())
-            prompts = []
-            validation_key = []
-            for _ in range(args.val_num_samples):
-                for k in range(10):
-                    for i in range(10):
-                        color = color_condition[k].unsqueeze(0)
-                        position = position_condition[i].unsqueeze(0)
-                        prompts.append(torch.cat((color, position), dim=0))
-                        validation_key.append(f"{color_keys[k]}_{position_keys[i]}")
-        else:
-            position_condition = torch.eye(10)
-            position_keys = list(train_dataset.position_cond_dict.keys())
-            prompts = []
-            validation_key = []
-            for _ in range(args.val_num_samples):
+    elif is_composition(args.test_mode):
+        color_keys = list(train_dataset.color_dict.keys())
+        position_keys = list(train_dataset.position_cond_dict.keys())
+        for _ in range(args.val_num_samples):
+            for k in range(10):
                 for i in range(10):
-                    position = position_condition[i].unsqueeze(0)
-                    prompts.append(position)
-                    validation_key.append(f"{position_keys[i]}")
-    
-    
+                    prompts.append(torch.stack((one_hot[k], one_hot[i])))
+                    validation_key.append(f"{color_keys[k]}_{position_keys[i]}")
+
     else:
-        raise ValueError(f"Unknown test mode {args.test_mode}")
+        position_keys = list(train_dataset.position_cond_dict.keys())
+        for _ in range(args.val_num_samples):
+            for i in range(10):
+                prompts.append(one_hot[i].unsqueeze(0))
+                validation_key.append(position_keys[i])
 
     return prompts, validation_key

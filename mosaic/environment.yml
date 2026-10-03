@@ -1,0 +1,28 @@
+# Conda environment for dataset generation (Blender via the `bpy` wheel).
+#
+#   conda env create -f environment.yml
+#   conda activate mosaic-datagen
+#   bash setup_bpy_rpath.sh      # only needed when the OS has no X11/OpenGL libraries (headless containers)
+#
+# bpy 4.2.x wheels exist for Python 3.11 only. The xorg/libgl entries provide the X11/OpenGL
+# shared libraries that bpy expects from the operating system, so this also works without root.
+name: mosaic-datagen
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - patchelf
+  # system libraries bpy links against (normally installed by the OS)
+  - xorg-libx11
+  - xorg-libxext
+  - xorg-libxrender
+  - xorg-libxi
+  - xorg-libxfixes
+  - xorg-libxxf86vm
+  - xorg-libsm
+  - xorg-libice
+  - libxkbcommon
+  - libgl
+  - pip:
+      - -r requirements.txt

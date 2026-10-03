@@ -14,7 +14,6 @@ checkpoints/
 dit_weights/
 unet_weights/
 presaved_latents/
-classifier_weights/
 data/
 *.pth
 *.pt

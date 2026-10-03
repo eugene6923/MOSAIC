@@ -13,5 +13,10 @@ python data_generation/generate_dataset.py --dataset_name generation_configs/pos
 # --gpu
 
 # Spatial relations with distractors
-python data_generation/generate_dataset.py --dataset_name generation_configs/position_distractor.json --save_path ./data
+python data_generation/generate_dataset.py --dataset_name generation_configs/position_complex.json --save_path ./data
+# --gpu
+
+
+# Spatial relations with compositions
+python data_generation/generate_dataset.py --dataset_name generation_configs/position_composition_subset.json --save_path ./data
 # --gpu
