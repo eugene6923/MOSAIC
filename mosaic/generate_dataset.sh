@@ -20,3 +20,7 @@ python data_generation/generate_dataset.py --dataset_name generation_configs/pos
 # Spatial relations with compositions
 python data_generation/generate_dataset.py --dataset_name generation_configs/position_composition_subset.json --save_path ./data
 # --gpu
+
+# Counting with compositions
+python data_generation/generate_dataset.py --dataset_name generation_configs/count_composition_subset.json --save_path ./data
+# --gpu

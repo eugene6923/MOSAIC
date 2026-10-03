@@ -82,6 +82,13 @@ python data_generation/generate_dataset.py --dataset_name generation_configs/pos
 python data_generation/generate_dataset.py --dataset_name generation_configs/position_composition_subset.json --save_path ./data --gpu
 ```
 
+**Counting, all object colours (composition subset)**
+```bash
+python data_generation/generate_dataset.py --dataset_name generation_configs/count_composition_subset.json --save_path ./data --gpu
+```
+
+The output folder is named after the config file (`generation_configs/count_composition_subset.json` → `data/comfort_ball_count_composition_subset/`).
+
 Remove `--gpu` flag to run on CPU.
 
 The training code (`../data.py`) expects the datasets under `mosaic/data/` with these folder names: `comfort_ball_count`, `comfort_ball_attribution`, `comfort_ball_attribute_complex`, `comfort_ball_attribute_composition_subset`, `comfort_ball_position`, `comfort_ball_position_complex`, `comfort_ball_position_composition_subset`, `comfort_ball_count_composition_subset`. The `*_composition_subset` datasets contain every (colour, class) pair; the held-out pairs are selected at training time by the `composition<N>` test_mode (see the top-level README).

@@ -114,6 +114,7 @@ bash evaluate.sh    # score the generated images -> outputs/.../evaluation/
 ```
 mosaic/data/
 ├── comfort_ball_count/
+├── comfort_ball_count_composition_subset/
 ├── comfort_ball_attribution/
 ├── comfort_ball_attribute_complex/
 ├── comfort_ball_attribute_composition_subset/
@@ -182,7 +183,6 @@ The pre-generated datasets can be downloaded from <https://nextcloud-rack.mai.in
 - [x] MOSAIC dataset generation code
 - [x] Training code
 - [x] Evaluation code
-- [ ] count-composition dataset
 
 ## Citation
 
