@@ -155,7 +155,7 @@ def add_objects(obj_shape, obj_color, obj_size, num_objects, existing_obj=None, 
     else:
         iter = num_objects if isinstance(num_objects, int) else 0
     
-    for idx, _ in enumerate(range(iter)): # here
+    for idx, _ in enumerate(range(iter)):
         placed = False
         while not placed:
             if comfort_ball:
@@ -247,8 +247,8 @@ def add_object(object_dir, name, scale, loc, theta=0, relation=None, comfort_bal
                 "Laptop": "Mcbook Laptop",
                 "Basketball": "Basketball",
                 "Bed": "Bed Luan3dr",
-                "Bench": "Park Bench", # working
-                "Chair": "Wooden Chair", # working
+                "Bench": "Park Bench",
+                "Chair": "Wooden Chair",
                 "Duck": "rubber_duck_toy",
                 "HorseL": "Horse (Beige) PL",
                 "HorseR": "Horse (Brown) PL",

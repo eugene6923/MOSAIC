@@ -37,7 +37,6 @@ CAR_RED = (0.95, 0.1, 0.1, 1)
 CAR_BLUE = (0.1, 0.3, 0.9, 1)
 BLACK = (0, 0, 0, 1)
 
-# new colors by me
 PINK = (1, 0.75, 0.8, 1)
 BROWN = (0.6, 0.4, 0.2, 1)
 MAROON = (0.5, 0, 0, 1)
@@ -81,10 +80,6 @@ ROTATION_LIST = [BEHIND, FRONT, LEFT, RIGHT]
 ALL_RELATIONS = ROTATION_LIST
 
 BASE_SCENE = "data_generation/background/base_scene_centered.blend"
-# BASE_SCENE = "data_generation/background/base_scene_with_ground_material4.blend"
-# BASE_SCENE = "data_generation/background/base_scene_with_ground_material.blend"
-# BASE_SCENE = "data_generation/assets/clevrtexv2_materials/coast_sand_rocks_02_4k_packed.blend"
-# BASE_SCENE = "data_generation/background/base_scene_centered.blend"  # Original without ground material
 MATERIAL_DIR = "data_generation/materials/"
 SHAPE_DIR = "data_generation/assets/"
 

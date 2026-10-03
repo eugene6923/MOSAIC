@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Experiment outputs / logs
+wandb/
+output/
+outputs/
+checkpoints/
+*.log
+
+# Weights, latents, datasets (too large for git)
+dit_weights/
+unet_weights/
+presaved_latents/
+classifier_weights/
+data/
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.tar.gz
+*.zip
+
+# Vendored diffusers: keep only the modified library source (src/) + license
+diffusers/*
+!diffusers/src/
+!diffusers/LICENSE
+!diffusers/setup.py
+!diffusers/pyproject.toml
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
