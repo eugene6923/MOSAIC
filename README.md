@@ -108,7 +108,21 @@ bash evaluate.sh    # score the generated images -> outputs/.../evaluation/
 | `best_classifier_attribute_pretrained.pth` | colour pair (100 classes) |
 | `best_classifier_attribute_shape_pretrained.pth` | shape check for attribute |
 
-**Data.** Either generate the datasets with the Blender pipeline (see [mosaic/README.md](mosaic/README.md)) or download the pre-generated images linked there, and place each dataset under `mosaic/data/<dataset folder>` using the folder names from the table above.
+**Data.** Download the pre-generated datasets from
+<https://nextcloud-rack.mai.informatik.tu-darmstadt.de/s/PAoH6BqDDLbDwyK> and extract them into `mosaic/data/`, so that the folder names from the table above exist, e.g.
+
+```
+mosaic/data/
+├── comfort_ball_count/
+├── comfort_ball_attribution/
+├── comfort_ball_attribute_complex/
+├── comfort_ball_attribute_composition_subset/
+├── comfort_ball_position/
+├── comfort_ball_position_complex/
+└── comfort_ball_position_composition_subset/
+```
+
+Alternatively, generate them yourself with the Blender pipeline described in [mosaic/README.md](mosaic/README.md) (`--save_path ./data` from inside `mosaic/` writes to the same location).
 
 ## Training
 
@@ -161,7 +175,7 @@ Results are printed and saved next to the images in `evaluation/` as `evaluation
 
 ## Dataset Generation
 
-See [mosaic/README.md](mosaic/README.md) for the Blender pipeline (configs for count, attribution, position, position-complex and the composition subsets) and the download link for the pre-generated datasets.
+The pre-generated datasets can be downloaded from <https://nextcloud-rack.mai.informatik.tu-darmstadt.de/s/PAoH6BqDDLbDwyK> (extract into `mosaic/data/`, see [Setup](#setup)). To generate them yourself, see [mosaic/README.md](mosaic/README.md) for the Blender pipeline (configs for count, attribution, position, position-complex and the composition subsets).
 
 ## TODO
 

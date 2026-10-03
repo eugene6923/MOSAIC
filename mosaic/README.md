@@ -110,7 +110,7 @@ All dataset generation is controlled via JSON config files in `generation_config
 
 ## Generated images
 
-If you want to just download the dataset that has been already generated, please find it [here](https://nextcloud-rack.mai.informatik.tu-darmstadt.de/s/PAoH6BqDDLbDwyK).
+If you want to just download the dataset that has been already generated, please find it [here](https://nextcloud-rack.mai.informatik.tu-darmstadt.de/s/PAoH6BqDDLbDwyK) and extract it into `mosaic/data/` (one folder per dataset, e.g. `mosaic/data/comfort_ball_count/`). This is the location the training code expects.
 
 ## Notes
 
