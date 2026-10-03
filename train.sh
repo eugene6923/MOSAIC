@@ -11,3 +11,17 @@ accelerate launch --num_processes 4 train.py \
   --model dit \
   --report_to wandb \
   --test_mode count_2000
+
+# accelerate launch --num_processes 4 train.py \
+#   --max_train_steps 20000 \
+#   --resolution 128 \
+#   --checkpointing_steps 2000 \
+#   --learning_rate 1e-4 \
+#   --train_batch_size 512 \
+#   --gradient_accumulation_steps 1 \
+#   --val_num_samples 5 \ # for composition, it is too slow to run 50 samples, so we comment it out and only run 5 samples for now.
+#   --seed 42 --resume_from_checkpoint latest --no_image \
+#   --validation_batch_size 4 --test_accuracy \
+#   --model dit \
+#   --report_to wandb \
+#   --test_mode count_composition1_2000

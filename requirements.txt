@@ -5,12 +5,14 @@ aiosignal==1.4.0
 annotated-types==0.8.0
 anyio==4.15.1
 attrs==26.1.0
+bpy==4.2.21
 certifi==2026.7.22
 charset-normalizer==3.5.2
 click==8.5.0
 cuda-bindings==13.4.3
 cuda-pathfinder==1.8.3
 cuda-toolkit==13.0.3.0
+Cython==3.3.0
 datasets==5.0.1
 dill==0.4.1
 filelock==4.0.9
@@ -45,6 +47,7 @@ nvidia-nccl-cu13==2.30.7
 nvidia-nvjitlink==13.4.92
 nvidia-nvshmem-cu13==3.4.5
 nvidia-nvtx==13.0.85
+opencv-python==5.0.0.93
 opentelemetry-api==1.45.0
 opentelemetry-exporter-http-transport==0.66b0
 opentelemetry-exporter-otlp-common==0.66b0
@@ -82,3 +85,4 @@ urllib3==2.8.0
 wandb==0.30.0
 xxhash==4.0.1
 yarl==1.25.1
+zstandard==0.25.0

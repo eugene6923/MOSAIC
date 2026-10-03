@@ -182,6 +182,15 @@ def main():
 
     task_of(args.test_mode)  # validate the test_mode early
 
+    # attribute and composition runs validate on 10 x 10 = 100 prompts (vs 10), so val_num_samples multiplies fast
+    if uses_two_token_condition(args.test_mode) and args.val_num_samples > 10:
+        num_prompts = 100
+        print(
+            f"WARNING: {args.test_mode} validates on {num_prompts} prompts x --val_num_samples {args.val_num_samples} "
+            f"= {num_prompts * args.val_num_samples} generated images per validation. "
+            "Use --val_num_samples 10 or less for attribute / composition runs unless this is intended."
+        )
+
     # NOTE: this string names the run folder of every existing checkpoint; keep it stable.
     param_string = (
         f"model{args.model}_resolution{args.resolution}_lr{args.learning_rate}"
